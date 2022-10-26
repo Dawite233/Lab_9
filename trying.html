@@ -55,7 +55,7 @@
         <!-- TODO Create select element, use v-model to connect to the types -->
         <!-- TODO Use v-for to create option elements, one for each type -->
 
-        <select class="form-control" v-model="type">
+        <select class="form-control" v-model="type" v-on:change="SDP_Type(activityRecords)">
           <option v-for="activityType in types"> {{ activityType }}</option>
         </select>
       </div>
@@ -83,7 +83,7 @@
 
       <div class="form-label pb-3">
 
-        <input type="checkbox" id="userCheckBox" name="userCheckBox"   v-model="complete">
+        <input type="checkbox" id="userCheckBox" name="userCheckBox"   v-model="complete" v-on:change="checkedBox_uu(record)">
         <label for="userCheckBox" >  Completed  </label>
 
       </div>
@@ -148,6 +148,21 @@
     </div>
   </div>
 
+<!--  <div v-if="CheckedUnchecked.records">-->
+
+<!--    <div v-if="CheckedUnchecked.present"> Checked, {{CheckedUnchecked.records}}-->
+<!--    </div>-->
+<!--    <div v-else>-->
+<!--      UnChecked, {{CheckedUnchecked.records}}-->
+<!--    </div>-->
+
+<!--  </div>-->
+  <div v-if="activityRecords.type "></div>
+          <div class="alert alert-success" v-if="activityRecords.type === 'Sketching' ">
+    {{activityRecords.type}}
+          </div>
+  </div>
+
 </div>
 <script>
   //   TODO create new Vue app here
@@ -172,7 +187,9 @@
         // Used with the select-option in the form for the user to select the type
         types: ['Sketching', 'Drawing', 'Painting'],
 
-        errors: []
+        errors: [],
+        CheckedUnchecked: {}, // for the checkBox and for the most recent arrival or most recent departure.
+        mostRecentType: {}
 
       }
     },
@@ -214,6 +231,7 @@
             complete: this.complete,
             notes: this.notes
 
+
           }
           this.activityRecords.push(record)
 
@@ -222,6 +240,14 @@
           this.activityRecords.sort(function(r1, r2) {
             // Sort with oldest records first, most recent at the end.
             return r1.date.getDate() - r2.date.getTime()
+
+            // this.hours = '',
+            // this.type = '',
+            // this.medium = '',
+            // this.complete = '',
+            // this.notes = ''
+
+
           })
 
         }
@@ -251,8 +277,17 @@
         } else {
           return total + ' hours.'
         }
+      },
+      checkedBox_uu(record) {
+        this.checkedBox_uu = record
+      },
+      SDP_Type(activityRecords) {
+        this.mostRecentType = activityRecords
+
+
       }
     }
+
   })
 
   app.mount('#app')
