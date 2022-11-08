@@ -55,7 +55,7 @@
         <!-- TODO Create select element, use v-model to connect to the types -->
         <!-- TODO Use v-for to create option elements, one for each type -->
 
-        <select class="form-control" v-model="type">
+        <select class="form-control" v-model="type" v-on:change="SDP_Type(activityRecords)">
           <option v-for="activityType in types"> {{ activityType }}</option>
         </select>
       </div>
@@ -83,8 +83,12 @@
 
       <div class="form-label pb-3">
 
-        <input type="checkbox" id="userCheckBox" name="userCheckBox"   v-model="completed">
-        <label for="userCheckBox" >  Completed  </label>
+        <input type="checkbox" id="userCheckBox"  onclick="myFunction()"
+               name="userCheckBox" value="complete"
+               v-model="complete" v-on:change="checkedBox_uu(record)">
+        <p id="text" style="display:none">Checkbox is CHECKED!</p>
+
+        <label for="userCheckBox" >  Complete </label>
 
       </div>
 
@@ -124,7 +128,7 @@
             <td>{{record.hours}}</td>
             <td>{{record.type}}</td>
             <td>{{record.medium}}</td>
-            <td>{{completed(record.complete)}}</td>
+            <td>{{record.complete}}</td>
             <td>{{record.notes}}</td>
           </tr>
 
@@ -148,6 +152,21 @@
     </div>
   </div>
 
+  <!--  <div v-if="CheckedUnchecked.records">-->
+
+  <!--    <div v-if="CheckedUnchecked.present"> Checked, {{CheckedUnchecked.records}}-->
+  <!--    </div>-->
+  <!--    <div v-else>-->
+  <!--      UnChecked, {{CheckedUnchecked.records}}-->
+  <!--    </div>-->
+
+  <!--  </div>-->
+  <div v-if="activityRecords.type "></div>
+  <div class="alert alert-success" v-if="activityRecords.type === 'Sketching' ">
+    {{activityRecords.type}}
+  </div>
+</div>
+
 </div>
 <script>
   //   TODO create new Vue app here
@@ -159,22 +178,22 @@
         activity: 'Practice Art',
 
         // AN array of the activity records
-        activityRecords: [ ],
+        activityRecords: [],
 
         // v-modeled to the form inputs
         dateString: ' ',
         hours: 1,
         type: '',
         medium: '',
-
+        complete: '',
         notes: '',
 
         // Used with the select-option in the form for the user to select the type
         types: ['Sketching', 'Drawing', 'Painting'],
 
-        complete: true,
-
-        errors: []
+        errors: [],
+        CheckedUnchecked: {}, // for the checkBox and for the most recent arrival or most recent departure.
+        mostRecentType: {}
 
       }
     },
@@ -186,11 +205,11 @@
         let date = new Date(this.dateString)
 
         // Is the date a valid date? is it today ir in the past?
-        if (!this.dateString || this.dateString === 'Invalid Date' || date > new Date() ) {
+        if (!this.dateString || this.dateString === 'Invalid Date' || date > new Date()) {
           this.errors.push('Select a valid date, Today or in the past')
         }
 
-        if (this.hours <= 0 || this.hours > 24 ) {
+        if (this.hours <= 0 || this.hours > 24) {
           this.errors.push('The number of hours must be greater than 0 and less than or equal to 24 ')
         }
 
@@ -207,7 +226,7 @@
         }
 
 
-        if (this.errors.length === 0 ) {
+        if (this.errors.length === 0) {
           let record = {
             date: date,
             hours: this.hours,
@@ -216,27 +235,29 @@
             complete: this.complete,
             notes: this.notes
 
+
           }
           this.activityRecords.push(record)
 
           // sort the activity records
 
-          this.activityRecords.sort(function(r1, r2) {
+          this.activityRecords.sort(function (r1, r2) {
             // Sort with oldest records first, most recent at the end.
             return r1.date.getDate() - r2.date.getTime()
+
+            // this.hours = '',
+            // this.type = '',
+            // this.medium = '',
+            // this.complete = '',
+            // this.notes = ''
+
+
           })
 
         }
       },
       shortDate(date) {
         return new Intl.DateTimeFormat('en-US', {timeZone: 'UTC'}).format(date)
-      },
-      completed(complete) {
-        if (complete == true )  {
-          return 'complete'
-        } else {
-          return 'not complete'
-        }
       }
     },
     computed: {
@@ -246,7 +267,7 @@
 
         if (numberOfRecords === 1) {
           return '1 Record'
-        }else {
+        } else {
           return numberOfRecords + ' Records'
         }
       },
@@ -255,10 +276,25 @@
         this.activityRecords.forEach(function (record) {
           total = total + record.hours
         })
-        if (total === 1 ) {
+        if (total === 1) {
           return ' 1 hour.'
         } else {
           return total + ' hours.'
+        }
+      },
+      checkedBox_uu(record) {
+        this.checkedBox_uu = record
+      },
+      // SDP_Type(activityRecords) {
+      //   this.mostRecentType = activityRecords
+      myFunction() {
+        let checkBox = document.getElementById("myCheck");
+        let text = document.getElementById("text");
+
+        if (checkBox.checked == true) {
+          text.style.display = "Completed";
+        } else {
+          text.style.display = "Not completed";
         }
       }
     }
