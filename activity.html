@@ -109,7 +109,7 @@
       <h3> {{ totalRecordsMessage }} </h3>
 
       <div id="records">
-        <table class="table table-hover">
+        <table class="table table-hover">+
           <tr>
             <th>Date</th>
             <th>How many hours?</th>
@@ -119,7 +119,9 @@
             <th>Notes</th>
           </tr>
           <!--  use v-for to create one table row for each activity record -->
-          <tr v-for="record in activityRecords">
+          <tr
+
+           v-for="record in activityRecords" v-blind:class="record.type">
             <td>{{ shortDate (record.date) }}</td>
             <td>{{record.hours}}</td>
             <td>{{record.type}}</td>
@@ -245,9 +247,9 @@
         let numberOfRecords = this.activityRecords.length
 
         if (numberOfRecords === 1) {
-          return '1 Record'
+          return ' 1 Record '
         }else {
-          return numberOfRecords + ' Records'
+          return numberOfRecords + ' Records '
         }
       },
       totalHours() {
